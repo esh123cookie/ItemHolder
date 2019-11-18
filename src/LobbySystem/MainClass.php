@@ -31,7 +31,7 @@ use pocketmine\utils\TextFormat as T;
 class MainClass extends PluginBase implements Listener{
 	
     public function onEnable(){
-        $this->getLogger()->info(" Enabled 	LobbySystem By LaithYoutuber ");
+        $this->getLogger()->info("ItemHolder Enabled");
 		@mkdir($this->getDataFolder());
 		$this->saveDefaultConfig();
         $this->cfg = $this->getConfig();
@@ -40,31 +40,11 @@ class MainClass extends PluginBase implements Listener{
 		*/
     }
 
-    public function onJoin(PlayerJoinEvent $playerJoinEvent){
-        $player = $playerJoinEvent->getPlayer();
-		$prefix = $this->cfg->get("prefix");
-        $playerJoinEvent->setJoinMessage($prefix . " §c[§b+§c] §e" . $player->getName());
-		$player->setAllowFlight(false);
-        $this->getItems($player);
-    }
-
-    public function onQuit(PlayerQuitEvent $playerQuitEvent){
-        $player = $playerQuitEvent->getPlayer();
-		$prefix = $this->cfg->get("prefix");
-        $playerQuitEvent->setQuitMessage($prefix . " §c[§b-§c] §e" . $player->getName());
-    }
-
     public function getItems(Player $player){
 		
 		$prefix = $this->cfg->get("prefix");
-        $player->getInventory()->clearAll();
-        $player->getArmorInventory()->clearAll();
-        $compass = Item::get(Item::COMPASS);
-        $compass->setCustomName("§7Teleporter");
-        $hider = Item::get(Item::SLIMEBALL);
-        $hider->setCustomName("§7Player Hiden");
-        $gadgets = Item::get(Item::CHEST);
-        $gadgets->setCustomName("§7Gadgets");
+        $netherstar = Item::get(Item::NETHER_STAR);
+        $netherstar->setCustomName("§7Mines");
 		$profile = Item::get(Item::BLAZE_POWDER);
 		$profile->setCustomName("§7Profile");
 		$pc = Item::get(Item::CLAY);
@@ -81,21 +61,19 @@ class MainClass extends PluginBase implements Listener{
 		$server = $this->getServer();
 		$prefix = $this->cfg->get("prefix");
         $item = $player->getInventory()->getItemInHand();
-        if ($item->getCustomName() == "§7Teleporter"){
-            $player->getInventory()->clearAll();
-            $vs = Item::get(Item::DIAMOND_SWORD);
-            $vs->setCustomName("§b1vs1");
+        if ($item->getCustomName() == "§7Mines"){
+	    $this->getServer()->dispatchCommand($player, "sell all");
 			
 			$sw = Item::get(Item::BLAZE_ROD);
-			$sw->setCustomName("§bSkyWars");
+			$sw->setCustomName("§b);
 			
-			$sm = Item::get(Item::STONE);
+			$sm = Item::get(Item::BLAZE_ROD);
 			$sm->setCustomName("§bSkyMLG");
 			
-			$fa = Item::get(Item::BOW);
+			$fa = Item::get(Item::BLAZE_ROD);
 			$fa->setCustomName("§bFFA");
 			
-			$bw = Item::get(Item::BED);
+			$bw = Item::get(Item::BLAZE_ROD);
 			$bw->setCustomName("§bBedWars");
 			
 			$ex = Item::get(Item::REDSTONE);
