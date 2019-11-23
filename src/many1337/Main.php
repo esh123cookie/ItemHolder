@@ -79,12 +79,6 @@ class Main extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
         $item = $player->getInventory()->getItemInHand();
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        $game1 = $cfg->get("Game-1-Name");
-        $game2 = $cfg->get("Game-2-Name");
-        $game3 = $cfg->get("Game-3-Name");
-        $game4 = $cfg->get("Game-4-Name");
-        $game5 = $cfg->get("Game-5-Name");
 
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
             $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
@@ -152,4 +146,3 @@ class Main extends PluginBase implements Listener
             $form->sendToPlayer($player);
         }
     }
-}
