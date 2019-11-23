@@ -90,13 +90,13 @@ class Main extends PluginBase implements Listener
             		$this->getServer()->dispatchCommand($player, "tutorial");
                         break;
                     case 1;
-                        $sender->sendMessage("§4Menu has been closed.");
+                        $sender->sendMessage("§cMenu has been closed.");
                 }
             });
             $form->setTitle("§6Tutorial Menu");
             $form->setContent("§bOpen TutorialUI§r");
-            $form->addbutton("§l§aOpen", 0);
-            $form->addButton("§lEXIT", 1);
+            $form->addbutton("§aOpen", 0);
+            $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
         }
 
@@ -112,13 +112,13 @@ class Main extends PluginBase implements Listener
             		$this->getServer()->dispatchCommand($player, "mines");
                         break;
                     case 1;
-                        $sender->sendMessage("§4Menu has been closed.");
+                        $sender->sendMessage("§cMenu has been closed.");
                 }
             });
             $form->setTitle("§6Mines Menu");
             $form->setContent("§bOpen MinesUI§r");
-            $form->addbutton("§l§aOpen", 0);
-            $form->addButton("§lEXIT", 1);
+            $form->addbutton("§aOpen", 0);
+            $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
         }
 
@@ -134,12 +134,12 @@ class Main extends PluginBase implements Listener
             		$this->getServer()->dispatchCommand($player, "sellinv");
                         break;
                     case 1;
-                        $sender->sendMessage("§4Menu has been closed.");
+                        $sender->sendMessage("§cMenu has been closed.");
                 }
             });
             $form->setTitle("§6SellAll Menu");
             $form->setContent("§bSell Your Inventory§r");
-            $form->addbutton("§l§aSellInv", 0);
-            $form->addButton("§lEXIT", 1);
+            $form->addbutton("§aSellInv", 0);
+            $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
         }
