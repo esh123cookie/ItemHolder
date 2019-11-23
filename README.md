@@ -1,1 +1,2 @@
 # Miner
+# variable error fix
