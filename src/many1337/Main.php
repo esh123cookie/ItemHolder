@@ -45,9 +45,6 @@ class Main extends PluginBase implements Listener
     }
 
     public function onDisable()
-    {
-        foreach ($this->getServer()->getOnlinePlayers() as $p) {
-            $p->transfer("80.99.208.62", "1941");
         }
     }
 
@@ -96,7 +93,6 @@ class Main extends PluginBase implements Listener
             $form->addbutton("§aOpen", 0);
             $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
-		}
         }
 
         if ($item->getCustomName() == TextFormat::BLUE . "MinesUI") {
