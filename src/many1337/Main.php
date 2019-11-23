@@ -96,6 +96,7 @@ class Main extends PluginBase implements Listener
             $form->addbutton("§aOpen", 0);
             $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
+		}
         }
 
         if ($item->getCustomName() == TextFormat::BLUE . "MinesUI") {
@@ -141,4 +142,3 @@ class Main extends PluginBase implements Listener
             $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
         }
-    }
