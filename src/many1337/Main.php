@@ -76,8 +76,6 @@ class Main extends PluginBase implements Listener
     }
     public function onInteract(PlayerInteractEvent $event)
     {
-	            $player = $event->getPlayer();
-        	    $item = $player->getInventory()->getItemInHand();
         }
 	
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
