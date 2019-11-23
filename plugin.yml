@@ -1,18 +1,5 @@
-name: ItemHolder
-main: LobbySystem\MainClass
-version: 1.1.0-Beta
-api: [3.0.0, 4.0.0]
-author: LaithYT
-commands:
-  lbinfo:
-    description: "Plugin-Infos Command"
-  youtube:
-    description: "Show Teamlist Command"
-  spawn:
-    description: "Teleport To Spawn"
-  lobby:
-    description: "Teleport To Lobby"
-  hub:
-    description: "Teleport To Hub"
-  fly:
-    description: "Enabled / Disbled Fly"
+name: LobbyCore
+main: many1337\Main
+api: [3.0.0, 4.0.0, 3.2.0, 3.2.3, 3.5.5]
+author: esh123unicorn
+version: 1.1.1
