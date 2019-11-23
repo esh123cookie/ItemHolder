@@ -1,278 +1,279 @@
 <?php
 
-namespace LobbySystem;
-
+namespace many1337;
+ 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\ConsoleCommandSender;
-use pocketmine\command\CommandExecutor;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EnityDamageEvent;
-use pocketmine\event\inventory\InventoryPickupItemEvent;
-use pocketmine\event\player\PlayerRespawnEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\utils\Config;
-use pocketmine\level\Level;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerDropItemEvent;
-use pocketmine\event\player\PlayerExhaustEvent;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\Item;
 use pocketmine\Player;
+use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\utils\Terminal;
-use pocketmine\utils\TextFormat as T;
+use pocketmine\utils\Config;
+use pocketmine\Server;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerItemConsumeEvent;
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemHeldEvent;
+use pocketmine\event\entity\ProjectileHitEvent;
+use pocketmine\event\entity\ProjectileLaunchEvent;
+use pocketmine\network\mcpe\protocol\ChangeDimensionPacket;
+use pocketmine\network\mcpe\protocol\types\DimensionIds;
+use pocketmine\event\Listeners;
+use pocketmine\utils\TextFormat;
+use pocketmine\scheduler\Task;
+use pocketmine\level\Level;
+use many1337\task\GuardianTask;
 
-class MainClass extends PluginBase implements Listener{
-	
-    public function onEnable(){
-        $this->getLogger()->info(" Enabled esh123unicorn");
-		@mkdir($this->getDataFolder());
-		$this->saveDefaultConfig();
-        $this->cfg = $this->getConfig();
-		/*
-			To Get Config Soon Add $this->cfg->get("");
-		*/
+
+class Main extends PluginBase implements Listener
+{
+
+    public function onEnable() {
+        @mkdir($this->getDataFolder());
+        $this->saveResource("config.yml");
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+        $pri = $this->getServer()->getPluginManager()->getPlugin("ProfileUI");
+        if($api === null){
+            $this->getServer()->getLogger()->notice("[LobbyCore] Please use a FormAPI plugin!");
+        }
     }
 
-    public function getItems(Player $player){
-		
-		$prefix = $this->cfg->get("prefix");
+    public function onDisable()
+    {
+        foreach ($this->getServer()->getOnlinePlayers() as $p) {
+            $p->transfer("80.99.208.62", "1941");
+        }
+    }
+
+    public function onJoin(PlayerJoinEvent $event){
+
+        $player = $event->getPlayer();
+        $name = $player->getName();
+        $this->Main($player);
+        $event->setJoinMessage("§7[§9+§7] §9" . $name);
+        $this->getScheduler()->scheduleDelayedTask(new GuardianTask($this, $player), 30);
+
+    }
+
+    public function onQuit(PlayerQuitEvent $event)
+    {
+
+        $player = $event->getPlayer();
+        $name = $player->getName();
+        $event->setQuitMessage("§7[§c-§7] §c" . $name);
+
+    }
+
+    public function onPlace(BlockPlaceEvent $ev)
+    {
+		$ev->setCancelled(true);
+    }
+
+    public function Hunger(PlayerExhaustEvent $ev)
+    {
+		$ev->setCancelled(true);
+    }
+
+    public function ItemMove(PlayerDropItemEvent $ev)
+    {
+		$ev->setCancelled(true);
+    }
+
+    public function onConsume(PlayerItemConsumeEvent $ev)
+    {
+		$ev->setCancelled(true);
+    }
+
+    public function Main(Player $player)
+    {
         $player->getInventory()->clearAll();
-        $player->getArmorInventory()->clearAll();
-        $compass = Item::get(Item::COMPASS);
-        $compass->setCustomName("§7Teleporter");
-        $hider = Item::get(Item::SLIMEBALL);
-        $hider->setCustomName("§7Player Hiden");
-        $gadgets = Item::get(Item::CHEST);
-        $gadgets->setCustomName("§7Gadgets");
-		$profile = Item::get(Item::BLAZE_POWDER);
-		$profile->setCustomName("§7Profile");
-		$pc = Item::get(Item::CLAY);
-		$pc->setCustomName("§7Particls {Soon}");
-        $player->getInventory()->setItem(0, $hider);
-		$player->getInventory()->setItem(1, $profile);
-        $player->getInventory()->setItem(4, $compass);
-		$player->getInventory()->setItem(7, $pc);
-        $player->getInventory()->setItem(8, $gadgets);
+        $player->getInventory()->setItem(4, Item::get(345)->setCustomName(TextFormat::YELLOW . "Navigator"));
+        $player->getInventory()->setItem(8, Item::get(399)->setCustomName(TextFormat::GREEN . "Info"));
+	    $player->getInventory()->setItem(7, Item::get(287)->setCustomName(TextFormat::GOLD . "Effects"));
+        $player->getInventory()->setItem(6, Item::get(288)->setCustomName(TextFormat::BLUE . "Fly"));
+        $player->getInventory()->setItem(2, Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
+
     }
-	 
-    public function setCompass(PlayerInteractEvent $playerInteractEvent){
-        $player = $playerInteractEvent->getPlayer();
-		$server = $this->getServer();
-		$prefix = $this->cfg->get("prefix");
+
+    public function onInteract(PlayerInteractEvent $event)
+    {
+        $player = $event->getPlayer();
         $item = $player->getInventory()->getItemInHand();
-        if ($item->getCustomName() == "§7Teleporter"){
-            $player->getInventory()->clearAll();
-            $vs = Item::get(Item::DIAMOND_SWORD);
-            $vs->setCustomName("§b1vs1");
-			
-			$sw = Item::get(Item::BLAZE_ROD);
-			$sw->setCustomName("§bSkyWars");
-			
-			$sm = Item::get(Item::STONE);
-			$sm->setCustomName("§bSkyMLG");
-			
-			$fa = Item::get(Item::BOW);
-			$fa->setCustomName("§bFFA");
-			
-			$bw = Item::get(Item::BED);
-			$bw->setCustomName("§bBedWars");
-			
-			$ex = Item::get(Item::REDSTONE);
-            $ex->setCustomName("§eExit");
-			
-            $player->getInventory()->setItem(0, $vs);
-			$player->getInventory()->setItem(1, $sw);
-			$player->getInventory()->setItem(2, $sm);
-			$player->getInventory()->setItem(3, $fa);
-			$player->getInventory()->setItem(4, $bw);
-            $player->getInventory()->setItem(8, $ex);
-			
-			}elseif ($item->getCustomName() == "§eExit"){
-            $player->getInventory()->clearAll();
-            $this->getItems($player);
-			
-			}elseif ($item->getCustomName() == "§bBedWars"){
-            $player->getInventory()->clearAll();
-            //Command Join
-            $this->getServer()->dispatchCommand($player, $this->cfg->get("bedwars"));
-			
-			}elseif ($item->getCustomName() == "§b1vs1"){
-            $player->getInventory()->clearAll();
-			//Command Join
-            $this->getServer()->dispatchCommand($player, $this->cfg->get("1vs1"));
-			
-			}elseif ($item->getCustomName() == "§bSkyWars"){
-            $player->getInventory()->clearAll();
-			//Command Join
-            $this->getServer()->dispatchCommand($player, $this->cfg->get("skywars"));
-			
-			}elseif ($item->getCustomName() == "§bSkyMLG"){
-            $player->getInventory()->clearAll();
-			//Command Join 
-            $this->getServer()->dispatchCommand($player, $this->cfg->get("skymlg"));
-			
-			}elseif ($item->getCustomName() == "§bFFA"){
-            $player->getInventory()->clearAll();
-			//Command Join
-            $this->getServer()->dispatchCommand($player, $this->cfg->get("ffa"));
-		}
-		
-		if ($item->getCustomName() == "§7Player Hiden"){
-			foreach($this->getServer()->getOnlinePlayers() as $players){
-                $player->hidePlayer($players);
-				$player->getInventory()->setItem(0, Item::get(416, 0, 1)->setCustomName(T::AQUA . "Show Players"));
-            }
-		}
-		if ($item->getCustomName() == T::AQUA . "Show Players"){
-			foreach($this->getServer()->getOnlinePlayers() as $players){
-                $player->showPlayer($players);
-				$player->getInventory()->setItem(0, Item::get( Item::SLIMEBALL)->setCustomName("§7Player Hiden"));
-            }
-		}
-		
-		if ($item->getCustomName() == "§7Gadgets"){
-			
-			$player->getInventory()->clearAll();
-			
-			$g1 = Item::get(Item::NAME_TAG);
-            $g1->setCustomName("§bNick");
-			
-			$g2 = Item::get(Item::BONE);
-            $g2->setCustomName("§bSize");
-			
-			$g3 = Item::get(Item::FEATHER);
-            $g3->setCustomName("§bColorFullArmor");
-			
-			$g4 = Item::get(Item::FEATHER);
-            $g4->setCustomName("§bFly");
-			
-			$ex = Item::get(Item::REDSTONE);
-            $ex->setCustomName("§eExit");
-			
-			$player->getInventory()->setItem(0, $g1);
-			$player->getInventory()->setItem(1, $g2);
-			$player->getInventory()->setItem(2, $g3);
-			$player->getInventory()->setItem(3, $g4);
-			$player->getInventory()->setItem(8, $ex);
-		
-		
-	}elseif ($item->getCustomName() == "§bFly"){ 
-		$player->getInventory()->clearAll();
-        $this->getItems($player);
-		$this->getServer()->dispatchCommand($player, "fly");
-		
-	}elseif ($item->getCustomName() == "§bNick"){ 
-		$player->getInventory()->clearAll();
-        $this->getItems($player);
-		$this->getServer()->dispatchCommand($player, "nickui");
-	
-	}elseif ($item->getCustomName() == "§bSize"){
-		$player->getInventory()->clearAll();
-        $this->getItems($player);
-		$this->getServer()->dispatchCommand($player, "sizeui");
-		
-	}elseif ($item->getCustomName() == "§bColorFullArmor"){
-		$player->getInventory()->clearAll();
-        $this->getItems($player);
-		$this->getServer()->dispatchCommand($player, "cfa");
-	}
-	
-	if ($item->getCustomName() == "§7Profile"){
-         $this->getServer()->dispatchCommand($player, "pvpstats");
-	}
-	
-}
+        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+        $game1 = $cfg->get("Game-1-Name");
+        $game2 = $cfg->get("Game-2-Name");
+        $game3 = $cfg->get("Game-3-Name");
+        $game4 = $cfg->get("Game-4-Name");
+        $game5 = $cfg->get("Game-5-Name");
 
-    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
-        if ($command == "lbyoutube") {
-			$prefix = $this->cfg->get("prefix");
-            $sender->sendMessage($prefix . "LobbySystem By LaithYT");
-            $sender->sendMessage("§n§4Youtube§r§8: LaithYoutuber");
-            $sender->sendMessage("§eEnjoy");
-			return true;
-        }
-        if ($command == "lbinfo"){
-			$prefix = $this->cfg->get("prefix");
-            $sender->sendMessage($prefix."LobbySystem by LaithYT");
-            return true;
-        }
-		if ($command == "hub"){
-			$sender->teleport($sender->getServer()->getDefaultLevel()->getSafeSpawn());
-			$prefix = $this->cfg->get("prefix");
-			$sender->sendMessage($prefix." Teleport To Hub");
-			$sender->getArmorInventory()->clearAll();
-			$sender->getInventory()->clearAll();
-			$this->getItems($sender);
-			return true;
-		}
-		if ($command == "lobby"){
-			$prefix = $this->cfg->get("prefix");
-			$sender->teleport($sender->getServer()->getDefaultLevel()->getSafeSpawn());
-			$sender->sendMessage($prefix." Teleport To Lobby");
-			$sender->getArmorInventory()->clearAll();
-			$sender->getInventory()->clearAll();
-			$this->getItems($sender);
-			return true;
-		}
-		if ($command == "spawn"){
-			$prefix = $this->cfg->get("prefix");
-			$sender->teleport($sender->getServer()->getDefaultLevel()->getSafeSpawn());
-			$sender->sendMessage($prefix." Teleport To Spawn");
-			$sender->getArmorInventory()->clearAll();
-			$sender->getInventory()->clearAll();
-			$this->getItems($sender);
-			return true;
-		}
-		if ($command->getName() === 'fly')
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission("fly.command") or $sender->isOp()) {
-                if (!$sender->getAllowFlight()) {
-					$prefix = $this->cfg->get("prefix");
-                    $sender->setAllowFlight(true);
-                    $sender->sendMessage($prefix. "§eFly Enabled");
+        if ($item->getCustomName() == TextFormat::YELLOW . "Navigator") {
+            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+            $form = $api->createSimpleForm(function (Player $sender, $data) {
+                $result = $data[0];
+
+                if ($result === null) {
                     return true;
-                } else {
-                    if ($sender->getAllowFlight()) {
-                        $sender->setAllowFlight(false);
-                        $sender->sendMessage($prefix. "§4Fly Disbled");
-                        return true;
-                    }
                 }
-            } else {
-                $sender->sendMessage($prefix. "You do not have a rank containing flying");
-            }
-        } else {
-            $sender->sendMessage("Use Command In-Game :D");
-            return true;
+                switch ($result) {
+                    case 0:
+                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+                        $ip = $cfg->get("ip-port");
+			$teleport1 = $cfg->get("loadingScreen1");
+                        $this->getServer()->getCommandMap()->dispatch($sender, $ip);
+                        $this->sendDimensionPacket($player, DimensionIds::$teleport1);
+                        break;
+                    case 1:
+                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+                        $ip2 = $cfg->get("ip-port2");
+			$teleport2 = $cfg->get("loadingScreen2");
+                        $this->getServer()->getCommandMap()->dispatch($sender, $ip2);
+                        $this->sendDimensionPacket($player, DimensionIds::$teleport2);
+                        break;
+                    case 2:
+                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+                        $ip3 = $cfg->get("ip-port3");
+			$teleport3 = $cfg->get("loadingScreen3");
+                        $this->getServer()->getCommandMap()->dispatch($sender, $ip3);
+                        $this->sendDimensionPacket($player, DimensionIds::$teleport3);
+                        break;
+                    case 3:
+                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+                        $ip4 = $cfg->get("ip-port4");
+			$teleport4 = $cfg->get("loadingScreen4");
+                        $this->getServer()->getCommandMap()->dispatch($sender, $ip4);
+                        $this->sendDimensionPacket($player, DimensionIds::$teleport4);
+                        break;
+                    case 4:
+                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+                        $ip5 = $cfg->get("ip-port5");
+		        $teleport5 = $cfg->get("loadingScreen5");
+                        $this->getServer()->getCommandMap()->dispatch($sender, $ip5);
+                        $this->sendDimensionPacket($player, DimensionIds::$teleport5);
+                        break;
+
+                }
+            });
+            $form->setTitle("§l§aServer Selector");
+            $form->setContent("Answer a server for teleporting");
+            $form->addButton(TextFormat::BOLD . $game1);
+            $form->addButton(TextFormat::BOLD . $game2);
+            $form->addButton(TextFormat::BOLD . $game3);
+            $form->addButton(TextFormat::BOLD . $game4);
+            $form->addButton(TextFormat::BOLD . $game5);
+            $form->sendToPlayer($player);
+
         }
 
+	if ($item->getCustomName() == TextFormat::GOLD . "Effects") {
+	    $eff1 = $cfg->get("EffectName");
+            $eff2 = $cfg->get("EffectName2");
+            $eff3 = $cfg->get("EffectName3");
+            $eff4 = $cfg->get("EffectName4");
+            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+            $form = $api->createSimpleForm(function (Player $sender, $data) {
+                $result = $data[0];
+
+                if ($result === null) {
+                    return true;
+                }
+                switch ($result) {
+                    case 0:
+				//later
+                        break;
+                    case 1:
+				//later
+                        break;
+                    case 2:
+				//later
+                        break;
+                    case 3:
+				//later
+                        break;
+
+
+                }
+            });
+            $form->setTitle("§l§aEffect Menu");
+            $form->setContent("Answer a Effect...");
+            $form->addButton(TextFormat::BOLD . $eff1);
+            $form->addButton(TextFormat::BOLD . $eff2);
+            $form->addButton(TextFormat::BOLD . $eff3);
+            $form->addButton(TextFormat::BOLD . $eff4);
+		
+            $form->sendToPlayer($player);
+        }
+
+        if ($item->getCustomName() == TextFormat::GREEN . "Info") {
+
+            $player = $event->getPlayer();
+            $player->addTitle("§c§oSoon...", "§aNext update in working!");
+
+        }
+
+        if ($item->getCustomName() == TextFormat::BLUE . "Fly") {
+            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+            $form = $api->createSimpleForm(function (Player $sender, $data){
+                $result = $data;
+                if($result != null) {
+                }
+                switch ($result) {
+                    case 0;
+                        $sender->setAllowFlight(true);
+                        $sender->sendMessage("§aFly has been enabled!§r");
+                        break;
+                    case 1;
+                        $sender->setAllowFlight(false);
+                        $sender->sendMessage("§cFly has been disabled!");
+                        break;
+                    case 2;
+                        $sender->sendMessage("§4FlyUI has been closed.");
+                }
+            });
+            $form->setTitle("§6Fly Mode");
+            $form->setContent("§b§oOn or Off your fly§r");
+            $form->addbutton("§l§aON", 0);
+            $form->addbutton("§l§cOFF", 1);
+            $form->addButton("§lEXIT", 2);
+            $form->sendToPlayer($player);
+        }
+
+        if ($item->getName() === TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players") {
+            $player->getInventory()->remove(Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
+            $player->getInventory()->setItem(2, Item::get(369)->setCustomName(TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"));
+            $player->sendMessage(TextFormat::RED . "Disabled Player Visibility!");
+            $this->hideall[] = $player;
+            foreach ($this->getServer()->getOnlinePlayers() as $p2) {
+                $player->hideplayer($p2);
+            }
+
+        } elseif ($item->getName() === TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"){
+            $player->getInventory()->remove(Item::get(369)->setCustomName(TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"));
+            $player->getInventory()->setItem(2, Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
+            $player->sendMessage(TextFormat::GREEN . "Enabled Player Visibility!");
+            unset($this->hideall[array_search($player, $this->hideall)]);
+            foreach ($this->getServer()->getOnlinePlayers() as $p2) {
+                $player->showplayer($p2);
+            }
+        }
     }
 
-	public function onRespawn(PlayerRespawnEvent $PlayerRespawnEvent){
-     $player = $PlayerRespawnEvent->getPlayer();
-     $pi = $player->getInventory();
-     $pi->clearAll();
-       $compass = Item::get(Item::COMPASS);
-        $compass->setCustomName("§7Teleporter");
-        $hider = Item::get(Item::SLIMEBALL);
-        $hider->setCustomName("§7Player Hiden");
-        $gadgets = Item::get(Item::CHEST);
-        $gadgets->setCustomName("§7Gadgets");
-		$profile = Item::get(Item::BLAZE_POWDER);
-		$profile->setCustomName("§7Profile");
-		$pc = Item::get(Item::CLAY);
-		$pc->setCustomName("§7Particls {Soon}");
-        $player->getInventory()->setItem(0, $hider);
-		$player->getInventory()->setItem(1, $profile);
-        $player->getInventory()->setItem(4, $compass);
-		$player->getInventory()->setItem(7, $pc);
-        $player->getInventory()->setItem(8, $gadgets);
-	}
+    public function sendDimensionPacket(Player $player, int $dimension){
+        if(
+            (!isset($player->dimension) && $dimension === DimensionIds::OVERWORLD) ||
+            $player->dimension === $dimension
+        ){
+            return; // ("Attempted to send ChangeDimensionPacket with the dimension the client already is in.");
+        }
+        $player->dimension = $dimension;
+        $pk = new ChangeDimensionPacket();
+        $pk->dimension = $dimension;
+        $pk->position = $this->player->asVector3();
+        $player->dataPacket($pk);
+    }
 }
