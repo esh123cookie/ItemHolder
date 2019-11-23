@@ -74,13 +74,17 @@ class Main extends PluginBase implements Listener
 	    $player->getInventory()->setItem(7, Item::get(372)->setCustomName(TextFormat::GOLD . "MinesUI"));
         $player->getInventory()->setItem(6, Item::get(280)->setCustomName(TextFormat::GREEN . "SellInv"));
 
-    	}
-	
     }
     public function onInteract(PlayerInteractEvent $event)
     {
         $player = $event->getPlayer();
         $item = $player->getInventory()->getItemInHand();
+        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+        $game1 = $cfg->get("Game-1-Name");
+        $game2 = $cfg->get("Game-2-Name");
+        $game3 = $cfg->get("Game-3-Name");
+        $game4 = $cfg->get("Game-4-Name");
+        $game5 = $cfg->get("Game-5-Name");
 
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
             $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
