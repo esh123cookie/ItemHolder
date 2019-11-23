@@ -65,7 +65,6 @@ class Main extends PluginBase implements Listener
 
         $player = $event->getPlayer();
         $name = $player->getName();
-        $item = $player->getInventory()->getItemInHand();
 
     }
 
@@ -74,7 +73,7 @@ class Main extends PluginBase implements Listener
         $player->getInventory()->setItem(8, Item::get(399)->setCustomName(TextFormat::BLUE . "TutorialUI"));
 	    $player->getInventory()->setItem(7, Item::get(372)->setCustomName(TextFormat::GOLD . "MinesUI"));
         $player->getInventory()->setItem(6, Item::get(280)->setCustomName(TextFormat::GREEN . "SellInv"));
-
+  
     }
 
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
