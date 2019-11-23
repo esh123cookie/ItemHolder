@@ -75,7 +75,11 @@ class Main extends PluginBase implements Listener
         $player->getInventory()->setItem(6, Item::get(280)->setCustomName(TextFormat::GREEN . "SellInv"));
   
     }
-
+	
+    public function onInteract(PlayerInteractEvent $event)
+    {
+        $player = $event->getPlayer();
+        $item = $player->getInventory()->getItemInHand();
         }
 
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
