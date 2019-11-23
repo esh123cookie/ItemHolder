@@ -51,13 +51,12 @@ class Main extends PluginBase implements Listener
             $p->transfer("80.99.208.62", "1941");
         }
     }
-
     public function onJoin(PlayerJoinEvent $event){
-
         $player = $event->getPlayer();
         $name = $player->getName();
         $this->Main($player);
-        $this->getScheduler()->scheduleDelayedTask(new GuardianTask($this, $player), 45);
+        $event->setJoinMessage("§7[§9+§7] §9" . $name);
+        $this->getScheduler()->scheduleDelayedTask(new GuardianTask($this, $player), 30);
 
     }
 
