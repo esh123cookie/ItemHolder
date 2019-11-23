@@ -39,6 +39,7 @@ class Main extends PluginBase implements Listener
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
         $pri = $this->getServer()->getPluginManager()->getPlugin("ProfileUI");
+	$item = $player->getInventory()->getItemInHand();
         if($api === null){
             $this->getServer()->getLogger()->notice("[LobbyCore] Please use a FormAPI plugin!");
         }
