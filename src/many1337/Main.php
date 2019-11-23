@@ -44,8 +44,7 @@ class Main extends PluginBase implements Listener
         }
     }
 
-    public function onDisable()
-        }
+    public function onDisable();
     }
 
     public function onJoin(PlayerJoinEvent $event){
