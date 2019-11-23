@@ -56,8 +56,7 @@ class Main extends PluginBase implements Listener
         $player = $event->getPlayer();
         $name = $player->getName();
         $this->Main($player);
-        $event->setJoinMessage("§7[§9+§7] §9" . $name);
-        $this->getScheduler()->scheduleDelayedTask(new GuardianTask($this, $player), 30);
+        $this->getScheduler()->scheduleDelayedTask(new GuardianTask($this, $player), 45);
 
     }
 
@@ -66,157 +65,20 @@ class Main extends PluginBase implements Listener
 
         $player = $event->getPlayer();
         $name = $player->getName();
-        $event->setQuitMessage("§7[§c-§7] §c" . $name);
 
-    }
-
-    public function onPlace(BlockPlaceEvent $ev)
-    {
-		$ev->setCancelled(true);
-    }
-
-    public function Hunger(PlayerExhaustEvent $ev)
-    {
-		$ev->setCancelled(true);
-    }
-
-    public function ItemMove(PlayerDropItemEvent $ev)
-    {
-		$ev->setCancelled(true);
-    }
-
-    public function onConsume(PlayerItemConsumeEvent $ev)
-    {
-		$ev->setCancelled(true);
     }
 
     public function Main(Player $player)
     {
-        $player->getInventory()->clearAll();
-        $player->getInventory()->setItem(4, Item::get(345)->setCustomName(TextFormat::YELLOW . "Navigator"));
-        $player->getInventory()->setItem(8, Item::get(399)->setCustomName(TextFormat::GREEN . "Info"));
-	    $player->getInventory()->setItem(7, Item::get(287)->setCustomName(TextFormat::GOLD . "Effects"));
-        $player->getInventory()->setItem(6, Item::get(288)->setCustomName(TextFormat::BLUE . "Fly"));
-        $player->getInventory()->setItem(2, Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
+        $player->getInventory()->setItem(8, Item::get(399)->setCustomName(TextFormat::BLUE . "TutorialUI"));
+	    $player->getInventory()->setItem(7, Item::get(372)->setCustomName(TextFormat::GOLD . "MinesUI"));
+        $player->getInventory()->setItem(6, Item::get(280)->setCustomName(TextFormat::GREEN . "SellInv"));
 
     }
 
-    public function onInteract(PlayerInteractEvent $event)
-    {
-        $player = $event->getPlayer();
-        $item = $player->getInventory()->getItemInHand();
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        $game1 = $cfg->get("Game-1-Name");
-        $game2 = $cfg->get("Game-2-Name");
-        $game3 = $cfg->get("Game-3-Name");
-        $game4 = $cfg->get("Game-4-Name");
-        $game5 = $cfg->get("Game-5-Name");
-
-        if ($item->getCustomName() == TextFormat::YELLOW . "Navigator") {
-            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
-            $form = $api->createSimpleForm(function (Player $sender, $data) {
-                $result = $data[0];
-
-                if ($result === null) {
-                    return true;
-                }
-                switch ($result) {
-                    case 0:
-                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-                        $ip = $cfg->get("ip-port");
-			$teleport1 = $cfg->get("loadingScreen1");
-                        $this->getServer()->getCommandMap()->dispatch($sender, $ip);
-                        $this->sendDimensionPacket($player, DimensionIds::$teleport1);
-                        break;
-                    case 1:
-                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-                        $ip2 = $cfg->get("ip-port2");
-			$teleport2 = $cfg->get("loadingScreen2");
-                        $this->getServer()->getCommandMap()->dispatch($sender, $ip2);
-                        $this->sendDimensionPacket($player, DimensionIds::$teleport2);
-                        break;
-                    case 2:
-                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-                        $ip3 = $cfg->get("ip-port3");
-			$teleport3 = $cfg->get("loadingScreen3");
-                        $this->getServer()->getCommandMap()->dispatch($sender, $ip3);
-                        $this->sendDimensionPacket($player, DimensionIds::$teleport3);
-                        break;
-                    case 3:
-                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-                        $ip4 = $cfg->get("ip-port4");
-			$teleport4 = $cfg->get("loadingScreen4");
-                        $this->getServer()->getCommandMap()->dispatch($sender, $ip4);
-                        $this->sendDimensionPacket($player, DimensionIds::$teleport4);
-                        break;
-                    case 4:
-                        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-                        $ip5 = $cfg->get("ip-port5");
-		        $teleport5 = $cfg->get("loadingScreen5");
-                        $this->getServer()->getCommandMap()->dispatch($sender, $ip5);
-                        $this->sendDimensionPacket($player, DimensionIds::$teleport5);
-                        break;
-
-                }
-            });
-            $form->setTitle("§l§aServer Selector");
-            $form->setContent("Answer a server for teleporting");
-            $form->addButton(TextFormat::BOLD . $game1);
-            $form->addButton(TextFormat::BOLD . $game2);
-            $form->addButton(TextFormat::BOLD . $game3);
-            $form->addButton(TextFormat::BOLD . $game4);
-            $form->addButton(TextFormat::BOLD . $game5);
-            $form->sendToPlayer($player);
-
         }
 
-	if ($item->getCustomName() == TextFormat::GOLD . "Effects") {
-	    $eff1 = $cfg->get("EffectName");
-            $eff2 = $cfg->get("EffectName2");
-            $eff3 = $cfg->get("EffectName3");
-            $eff4 = $cfg->get("EffectName4");
-            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
-            $form = $api->createSimpleForm(function (Player $sender, $data) {
-                $result = $data[0];
-
-                if ($result === null) {
-                    return true;
-                }
-                switch ($result) {
-                    case 0:
-				//later
-                        break;
-                    case 1:
-				//later
-                        break;
-                    case 2:
-				//later
-                        break;
-                    case 3:
-				//later
-                        break;
-
-
-                }
-            });
-            $form->setTitle("§l§aEffect Menu");
-            $form->setContent("Answer a Effect...");
-            $form->addButton(TextFormat::BOLD . $eff1);
-            $form->addButton(TextFormat::BOLD . $eff2);
-            $form->addButton(TextFormat::BOLD . $eff3);
-            $form->addButton(TextFormat::BOLD . $eff4);
-		
-            $form->sendToPlayer($player);
-        }
-
-        if ($item->getCustomName() == TextFormat::GREEN . "Info") {
-
-            $player = $event->getPlayer();
-            $player->addTitle("§c§oSoon...", "§aNext update in working!");
-
-        }
-
-        if ($item->getCustomName() == TextFormat::BLUE . "Fly") {
+        if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
             $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
             $form = $api->createSimpleForm(function (Player $sender, $data){
                 $result = $data;
@@ -224,56 +86,60 @@ class Main extends PluginBase implements Listener
                 }
                 switch ($result) {
                     case 0;
-                        $sender->setAllowFlight(true);
-                        $sender->sendMessage("§aFly has been enabled!§r");
+            		$player->addTitle("§aOpening Menu");
+            		$this->getServer()->dispatchCommand($player, "tutorial");
                         break;
                     case 1;
-                        $sender->setAllowFlight(false);
-                        $sender->sendMessage("§cFly has been disabled!");
-                        break;
-                    case 2;
-                        $sender->sendMessage("§4FlyUI has been closed.");
+                        $sender->sendMessage("§4Menu has been closed.");
                 }
             });
-            $form->setTitle("§6Fly Mode");
-            $form->setContent("§b§oOn or Off your fly§r");
-            $form->addbutton("§l§aON", 0);
-            $form->addbutton("§l§cOFF", 1);
-            $form->addButton("§lEXIT", 2);
+            $form->setTitle("§6Tutorial Menu");
+            $form->setContent("§bOpen TutorialUI§r");
+            $form->addbutton("§l§aOpen", 0);
+            $form->addButton("§lEXIT", 1);
             $form->sendToPlayer($player);
         }
 
-        if ($item->getName() === TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players") {
-            $player->getInventory()->remove(Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
-            $player->getInventory()->setItem(2, Item::get(369)->setCustomName(TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"));
-            $player->sendMessage(TextFormat::RED . "Disabled Player Visibility!");
-            $this->hideall[] = $player;
-            foreach ($this->getServer()->getOnlinePlayers() as $p2) {
-                $player->hideplayer($p2);
-            }
-
-        } elseif ($item->getName() === TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"){
-            $player->getInventory()->remove(Item::get(369)->setCustomName(TextFormat::YELLOW . "Show ".TextFormat::GREEN."Players"));
-            $player->getInventory()->setItem(2, Item::get(280)->setCustomName(TextFormat::YELLOW . "Hide ".TextFormat::GREEN."Players"));
-            $player->sendMessage(TextFormat::GREEN . "Enabled Player Visibility!");
-            unset($this->hideall[array_search($player, $this->hideall)]);
-            foreach ($this->getServer()->getOnlinePlayers() as $p2) {
-                $player->showplayer($p2);
-            }
+        if ($item->getCustomName() == TextFormat::BLUE . "MinesUI") {
+            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+            $form = $api->createSimpleForm(function (Player $sender, $data){
+                $result = $data;
+                if($result != null) {
+                }
+                switch ($result) {
+                    case 0;
+            		$player->addTitle("§aOpening Menu");
+            		$this->getServer()->dispatchCommand($player, "mines");
+                        break;
+                    case 1;
+                        $sender->sendMessage("§4Menu has been closed.");
+                }
+            });
+            $form->setTitle("§6Mines Menu");
+            $form->setContent("§bOpen MinesUI§r");
+            $form->addbutton("§l§aOpen", 0);
+            $form->addButton("§lEXIT", 1);
+            $form->sendToPlayer($player);
         }
-    }
 
-    public function sendDimensionPacket(Player $player, int $dimension){
-        if(
-            (!isset($player->dimension) && $dimension === DimensionIds::OVERWORLD) ||
-            $player->dimension === $dimension
-        ){
-            return; // ("Attempted to send ChangeDimensionPacket with the dimension the client already is in.");
+        if ($item->getCustomName() == TextFormat::BLUE . "SellInv") {
+            $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+            $form = $api->createSimpleForm(function (Player $sender, $data){
+                $result = $data;
+                if($result != null) {
+                }
+                switch ($result) {
+                    case 0;
+            		$player->addTitle("§aOpening Menu");
+            		$this->getServer()->dispatchCommand($player, "sellinv");
+                        break;
+                    case 1;
+                        $sender->sendMessage("§4Menu has been closed.");
+                }
+            });
+            $form->setTitle("§6SellAll Menu");
+            $form->setContent("§bSell Your Inventory§r");
+            $form->addbutton("§l§aSellInv", 0);
+            $form->addButton("§lEXIT", 1);
+            $form->sendToPlayer($player);
         }
-        $player->dimension = $dimension;
-        $pk = new ChangeDimensionPacket();
-        $pk->dimension = $dimension;
-        $pk->position = $this->player->asVector3();
-        $player->dataPacket($pk);
-    }
-}
