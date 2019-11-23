@@ -76,6 +76,10 @@ class Main extends PluginBase implements Listener
   
     }
     public function onInteract(PlayerInteractEvent $event)
+    {
+	$cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+	$player = $event->getPlayer();
+	$item = $player->getInventory()->getItemInHand();
 	    
         }
 	
