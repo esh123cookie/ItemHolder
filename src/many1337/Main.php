@@ -78,6 +78,7 @@ class Main extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
         $item = $player->getInventory()->getItemInHand();
+	    
         }
 	
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
