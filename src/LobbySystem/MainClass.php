@@ -31,7 +31,7 @@ use pocketmine\utils\TextFormat as T;
 class MainClass extends PluginBase implements Listener{
 	
     public function onEnable(){
-        $this->getLogger()->info("ItemHolder Enabled");
+        $this->getLogger()->info(" Enabled esh123unicorn");
 		@mkdir($this->getDataFolder());
 		$this->saveDefaultConfig();
         $this->cfg = $this->getConfig();
@@ -43,8 +43,14 @@ class MainClass extends PluginBase implements Listener{
     public function getItems(Player $player){
 		
 		$prefix = $this->cfg->get("prefix");
-        $netherstar = Item::get(Item::NETHER_STAR);
-        $netherstar->setCustomName("§7Mines");
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
+        $compass = Item::get(Item::COMPASS);
+        $compass->setCustomName("§7Teleporter");
+        $hider = Item::get(Item::SLIMEBALL);
+        $hider->setCustomName("§7Player Hiden");
+        $gadgets = Item::get(Item::CHEST);
+        $gadgets->setCustomName("§7Gadgets");
 		$profile = Item::get(Item::BLAZE_POWDER);
 		$profile->setCustomName("§7Profile");
 		$pc = Item::get(Item::CLAY);
@@ -61,19 +67,21 @@ class MainClass extends PluginBase implements Listener{
 		$server = $this->getServer();
 		$prefix = $this->cfg->get("prefix");
         $item = $player->getInventory()->getItemInHand();
-        if ($item->getCustomName() == "§7Mines"){
-	    $this->getServer()->dispatchCommand($player, "sell all");
+        if ($item->getCustomName() == "§7Teleporter"){
+            $player->getInventory()->clearAll();
+            $vs = Item::get(Item::DIAMOND_SWORD);
+            $vs->setCustomName("§b1vs1");
 			
 			$sw = Item::get(Item::BLAZE_ROD);
-			$sw->setCustomName("§b);
+			$sw->setCustomName("§bSkyWars");
 			
-			$sm = Item::get(Item::BLAZE_ROD);
+			$sm = Item::get(Item::STONE);
 			$sm->setCustomName("§bSkyMLG");
 			
-			$fa = Item::get(Item::BLAZE_ROD);
+			$fa = Item::get(Item::BOW);
 			$fa->setCustomName("§bFFA");
 			
-			$bw = Item::get(Item::BLAZE_ROD);
+			$bw = Item::get(Item::BED);
 			$bw->setCustomName("§bBedWars");
 			
 			$ex = Item::get(Item::REDSTONE);
@@ -247,44 +255,6 @@ class MainClass extends PluginBase implements Listener{
 
     }
 
-
-    public function onDrop(PlayerDropItemEvent $playerDropItemEvent){
-        $player = $playerDropItemEvent->getPlayer();
-		$level = $player->getLevel();
-		$dlevel = $this->getServer()->getDefaultLevel();
-		if($level === $dlevel){
-         $playerDropItemEvent->setCancelled(true);
-      }
-    }
-
-
-    public function onBreak(BlockBreakEvent $BlockBreakEvent){
-		$player = $BlockBreakEvent->getPlayer();
-		$level = $player->getLevel();
-		$dlevel = $this->getServer()->getDefaultLevel();
-		if($level === $dlevel){
-        $BlockBreakEvent->setCancelled(true);
-		}
-    }
-
-    public function onPlace(BlockPlaceEvent $blockPlaceEvent){
-		$player = $blockPlaceEvent->getPlayer();
-		$level = $player->getLevel();
-		$dlevel = $this->getServer()->getDefaultLevel();
-		if($level === $dlevel){
-         $blockPlaceEvent->setCancelled(true);
-      }
-    }
-
-    public function onHunger(PlayerExhaustEvent $playerExhaustEvent){
-		$player = $playerExhaustEvent->getPlayer();
-		$level = $player->getLevel();
-		$dlevel = $this->getServer()->getDefaultLevel();
-		if($level === $dlevel){
-        $playerExhaustEvent->setCancelled(true);
-		}
-    }
-	
 	public function onRespawn(PlayerRespawnEvent $PlayerRespawnEvent){
      $player = $PlayerRespawnEvent->getPlayer();
      $pi = $player->getInventory();
