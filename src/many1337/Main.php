@@ -151,3 +151,4 @@ class Main extends PluginBase implements Listener
             $form->addButton("§cEXIT", 1);
             $form->sendToPlayer($player);
         }
+    }
