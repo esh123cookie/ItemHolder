@@ -78,6 +78,7 @@ class Main extends PluginBase implements Listener
         }
 
         if ($item->getCustomName() == TextFormat::BLUE . "TutorialUI") {
+	    $item = $player->getInventory()->getItemInHand();
             $api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
             $form = $api->createSimpleForm(function (Player $sender, $data){
                 $result = $data;
